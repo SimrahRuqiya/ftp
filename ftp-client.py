@@ -12,15 +12,14 @@ if __name__ == "__main__":
         filename = input("Enter the filename to transfer: ")
 
         try:
-            file = open(filename, 'r') # Open the file to read
-            data = file.read()
+            file = open(filename, 'rb') # Open the file to read
+            data = file.read(1024)
 
-            if not data:
-                break
             while data:
-                sock.send(str(data).encode()) # Send data to the server
-                data = file.read()
+                sock.send(data)  # Send binary data
+                data = file.read(1024)
             file.close()
+            break  # Exit after sending one file
         except IOError:
             print("Invalid file name or file not found. Please try again.")
 

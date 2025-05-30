@@ -27,20 +27,20 @@ if __name__ == "__main__":
 
     for conn in connections:
         index += 1
-        dataRecieved = conn[0].recv(1024).decode() # Receive data from the client
+        dataRecieved = conn[0].recv(1024) # Receive data from the client
 
         if not dataRecieved:
             print("No data received from client", index)
             continue
-        filename = 'file' + str(fileNo) + '.txt' 
+        filename = 'output' + str(fileNo) # Create a filename for each file
         fileNo += 1
 
-        with open(filename, 'w') as file:
-            if not dataRecieved:
-                break
-            else:
-                file.write(dataRecieved)
-                dataRecieved = conn[0].recv(1024).decode()
+        with open(filename, 'wb') as file:
+            while True:
+                data = conn[0].recv(1024)
+                if not data:
+                    break
+                file.write(data)
 
         print(f"File {filename} received from client {index}")
         file.close()
