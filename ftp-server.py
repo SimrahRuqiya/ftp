@@ -1,5 +1,6 @@
 import socket
-import os 
+import os
+from tqdm import tqdm
 
 def start_server(host, port, totalClients): # Pass arguments explicitly
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -61,7 +62,13 @@ def receive_files(connections):
             # Receive the file data
             unique_filename_path = unique_filename(save_dir, filename)
             full_path = os.path.join(save_dir, unique_filename_path)
-            with open(full_path, 'wb') as f:
+            with open(full_path, 'wb') as f, tqdm(
+                total=filesize,
+                unit='B',
+                unit_scale=True,
+                desc=f"\033[0m{filename}\033[95m",  
+                ncols=70
+            ) as pbar:
                 bytes_received = 0
                 while bytes_received < filesize:
                     data = conn[0].recv(min(1024, filesize - bytes_received))
@@ -69,7 +76,7 @@ def receive_files(connections):
                         break
                     f.write(data)
                     bytes_received += len(data)
-                    progress_bar(bytes_received, filesize)
+                    pbar.update(len(data))  
 
             print(f"File {unique_filename_path} received ({filesize} bytes) from client {index}")
 
