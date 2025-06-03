@@ -19,6 +19,14 @@ def start_server(host, port, totalClients): # Pass arguments explicitly
         print("Connection established with client", i + 1)
     return connections # Return the list of connections
 
+def progress_bar(current, total, bar_length=50):
+    percent = current / total
+    filled_length = int(bar_length * percent)
+    bar = '█' * filled_length + '-' * (bar_length - filled_length) 
+    print(f'\r|{bar}| {percent:.2%}', end='')  # Print the progress bar with percentage
+    if current == total:
+        print()  # New line when done
+
 def unique_filename(directory, filename):
     base, ext = os.path.splitext(filename) # Split the filename into base and extension
     counter = 1
@@ -61,6 +69,7 @@ def receive_files(connections):
                         break
                     f.write(data)
                     bytes_received += len(data)
+                    progress_bar(bytes_received, filesize)
 
             print(f"File {unique_filename_path} received ({filesize} bytes) from client {index}")
 
