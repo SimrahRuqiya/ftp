@@ -19,6 +19,17 @@ def start_server(host, port, totalClients): # Pass arguments explicitly
         print("Connection established with client", i + 1)
     return connections # Return the list of connections
 
+def unique_filename(directory, filename):
+    base, ext = os.path.splitext(filename) # Split the filename into base and extension
+    counter = 1
+    new_filename = filename
+
+    while os.path.exists(os.path.join(directory, new_filename)): # Check if the file already exists
+        new_filename = f"{base}({counter}){ext}" 
+        counter += 1
+
+    return new_filename
+
 def receive_files(connections):
     save_dir = "received"
     os.makedirs(save_dir, exist_ok=True)
@@ -40,7 +51,8 @@ def receive_files(connections):
             filesize = int.from_bytes(conn[0].recv(8), 'big')
 
             # Receive the file data
-            full_path = os.path.join(save_dir, filename)
+            unique_filename_path = unique_filename(save_dir, filename)
+            full_path = os.path.join(save_dir, unique_filename_path)
             with open(full_path, 'wb') as f:
                 bytes_received = 0
                 while bytes_received < filesize:
@@ -50,7 +62,7 @@ def receive_files(connections):
                     f.write(data)
                     bytes_received += len(data)
 
-            print(f"File {filename} received ({filesize} bytes) from client {index}")
+            print(f"File {unique_filename_path} received ({filesize} bytes) from client {index}")
 
         conn[0].close()
 
