@@ -20,14 +20,6 @@ def start_server(host, port, totalClients): # Pass arguments explicitly
         print("Connection established with client", i + 1)
     return connections # Return the list of connections
 
-def progress_bar(current, total, bar_length=50):
-    percent = current / total
-    filled_length = int(bar_length * percent)
-    bar = '█' * filled_length + '-' * (bar_length - filled_length) 
-    print(f'\r|{bar}| {percent:.2%}', end='')  # Print the progress bar with percentage
-    if current == total:
-        print()  # New line when done
-
 def unique_filename(directory, filename):
     base, ext = os.path.splitext(filename) # Split the filename into base and extension
     counter = 1
